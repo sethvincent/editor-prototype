@@ -29,7 +29,7 @@ var list = require('./list')({
   height: window.innerHeight
 })
 
-list.on('click', function (e, row) {
+list.addEventListener('click', function (e, row) {
   item.render(row)
   elClass(itemEl).add('active')
   elClass(listWrapper).remove('active')
