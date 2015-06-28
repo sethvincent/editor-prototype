@@ -1,0 +1,27 @@
+{
+  "name": "editor-prototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bundle": "browserify example.js -o bundle.js",
+    "start": "budo example.js:bundle.js --live"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "base-element": "^3.0.1",
+    "data-set": "^4.0.0",
+    "dom-value": "0.0.0",
+    "element-class": "^0.2.0",
+    "extend": "^2.0.1",
+    "inherits": "^2.0.1",
+    "lodash.debounce": "^3.1.0",
+    "through2": "^0.6.5",
+    "view-list": "^2.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.4",
+    "budo": "^4.1.0"
+  }
+}
