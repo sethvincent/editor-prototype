@@ -42,6 +42,21 @@ item.addEventListener('close', function (e) {
 
 var render = debounce(list.render.bind(list), 100)
 
+var actionsEl = document.getElementById('actions')
+var filter = require('./filter')({ appendTo: actionsEl })
+
+filter.addEventListener('filter', function (results, length) {
+  render(results)
+})
+
+filter.addEventListener('reset', function (results, length) {
+  render(all)
+})
+
+list.addEventListener('load', function () {
+  filter.render(all)
+})
+
 var all = []
 var model = through.obj(function (chunk, enc, cb) {
   this.push(chunk)
