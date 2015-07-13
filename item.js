@@ -41,7 +41,13 @@ Item.prototype.render = function (obj) {
       onclick: function (e) {
         e.preventDefault()
         self.send('close', e) 
-      }}, 'x'),
+      }
+    }, 'x'),
+    self.html('button#destroyRow', {
+      onclick: function (e) {
+        self.send('destroy-row', obj, e)
+      }
+    }, 'destroy row'),
     self.html('div.item-properties-wrapper', fields)
   ])
 

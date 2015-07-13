@@ -106,6 +106,13 @@ Editor.prototype.destroy = function () {
   this.store.set('state', null)
   this.render()
 }
+
+Editor.prototype.destroyRow = function (key) {
+  this.data = this.data.filter(function (row) {
+    return row.key !== key
+  })
+  this.render({ data: this.data })
+}
 },{"./actions":1,"./filter":3,"./headers":4,"./item":6,"./list":7,"simple-local-storage":62,"through2":78}],3:[function(require,module,exports){
 var debounce = require('lodash.debounce')
 var element = require('base-element')
@@ -172,9 +179,7 @@ Headers.prototype.render = function (headers) {
   var items = []
 
   headers.forEach(function (header) {
-    items.push(self.html('li.list-header-item.data-list-property', [
-      self.html('span.spacer', header)
-    ]))
+    items.push(self.html('li.list-header-item.data-list-property', header))
   })
 
   var vtree = this.html('ul.headers-list.data-list-properties', items)
@@ -187,15 +192,23 @@ var elClass = require('element-class')
 
 var editor = require('./editor')()
 
-editor.views.list.addEventListener('click', function (e, row) {
-  editor.views.item.render(row)
+function itemActive () {
   elClass(editor.el.item).add('active')
   elClass(editor.el.listWrapper).remove('active')
+}
+
+function itemInActive () {
+  elClass(editor.el.item).remove('active')
+  elClass(editor.el.listWrapper).add('active')
+}
+
+editor.views.list.addEventListener('click', function (e, row) {
+  editor.views.item.render(row)
+  itemActive()
 })
 
 editor.views.item.addEventListener('close', function (e) {
-  elClass(editor.el.item).remove('active')
-  elClass(editor.el.listWrapper).add('active')
+  itemInActive()
 })
 
 var render = editor.render.bind(editor)
@@ -234,7 +247,14 @@ editor.views.actions.addEventListener('new-column', function (e) {
 })
 
 editor.views.actions.addEventListener('destroy', function (e) {
-  editor.destroy()
+  if (window.confirm('wait. are you sure you want to destroy all this data?')) {
+    editor.destroy()
+  }
+})
+
+editor.views.item.addEventListener('destroy-row', function (row, e) {
+  editor.destroyRow(row.key)
+  itemInActive()
 })
 
 render()
@@ -282,7 +302,13 @@ Item.prototype.render = function (obj) {
       onclick: function (e) {
         e.preventDefault()
         self.send('close', e) 
-      }}, 'x'),
+      }
+    }, 'x'),
+    self.html('button#destroyRow', {
+      onclick: function (e) {
+        self.send('destroy-row', obj, e)
+      }
+    }, 'destroy row'),
     self.html('div.item-properties-wrapper', fields)
   ])
 

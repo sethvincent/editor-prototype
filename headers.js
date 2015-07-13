@@ -14,9 +14,7 @@ Headers.prototype.render = function (headers) {
   var items = []
 
   headers.forEach(function (header) {
-    items.push(self.html('li.list-header-item.data-list-property', [
-      self.html('span.spacer', header)
-    ]))
+    items.push(self.html('li.list-header-item.data-list-property', header))
   })
 
   var vtree = this.html('ul.headers-list.data-list-properties', items)

@@ -67,3 +67,10 @@ Editor.prototype.destroy = function () {
   this.store.set('state', null)
   this.render()
 }
+
+Editor.prototype.destroyRow = function (key) {
+  this.data = this.data.filter(function (row) {
+    return row.key !== key
+  })
+  this.render({ data: this.data })
+}

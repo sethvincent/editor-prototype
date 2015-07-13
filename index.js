@@ -4,15 +4,23 @@ var elClass = require('element-class')
 
 var editor = require('./editor')()
 
-editor.views.list.addEventListener('click', function (e, row) {
-  editor.views.item.render(row)
+function itemActive () {
   elClass(editor.el.item).add('active')
   elClass(editor.el.listWrapper).remove('active')
+}
+
+function itemInActive () {
+  elClass(editor.el.item).remove('active')
+  elClass(editor.el.listWrapper).add('active')
+}
+
+editor.views.list.addEventListener('click', function (e, row) {
+  editor.views.item.render(row)
+  itemActive()
 })
 
 editor.views.item.addEventListener('close', function (e) {
-  elClass(editor.el.item).remove('active')
-  elClass(editor.el.listWrapper).add('active')
+  itemInActive()
 })
 
 var render = editor.render.bind(editor)
@@ -51,7 +59,14 @@ editor.views.actions.addEventListener('new-column', function (e) {
 })
 
 editor.views.actions.addEventListener('destroy', function (e) {
-  editor.destroy()
+  if (window.confirm('wait. are you sure you want to destroy all this data?')) {
+    editor.destroy()
+  }
+})
+
+editor.views.item.addEventListener('destroy-row', function (row, e) {
+  editor.destroyRow(row.key)
+  itemInActive()
 })
 
 render()
