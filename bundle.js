@@ -7,7 +7,7 @@ function Editor (options) {
   if (!(this instanceof Editor)) return new Editor(options)
   options = options || {}
   this.data = []
-  this.properties = options.properties || {}
+  this.properties = options.properties || []
 
   this.el = {
     list: document.getElementById('list'),
