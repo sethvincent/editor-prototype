@@ -113,6 +113,27 @@ Editor.prototype.destroyRow = function (key) {
   })
   this.render({ data: this.data })
 }
+
+Editor.prototype.destroyColumn = function (name) {
+  this.data.forEach(function (item) {
+    delete item.value[name]
+  })
+  this.properties = this.properties.filter(function (header) {
+    return header !== name
+  })
+  this.render({ data: this.data, properties: this.properties })
+}
+
+Editor.prototype.renameColumn = function (oldname, newname) {
+  this.data.forEach(function (item) {
+    item.value[newname] = item.value[oldname]
+    delete item.value[oldname]
+  })
+  var i = this.properties.indexOf(oldname)
+  this.properties[i] = newname
+  this.render({ data: this.data, properties: this.properties })
+}
+
 },{"./actions":1,"./filter":3,"./headers":4,"./item":6,"./list":7,"simple-local-storage":62,"through2":78}],3:[function(require,module,exports){
 var debounce = require('lodash.debounce')
 var element = require('base-element')
@@ -179,7 +200,19 @@ Headers.prototype.render = function (headers) {
   var items = []
 
   headers.forEach(function (header) {
-    items.push(self.html('li.list-header-item.data-list-property', header))
+    items.push(self.html('li.list-header-item.data-list-property', [
+      self.html('button#destroy-column.small', {
+        onclick: function (e) {
+          self.send('destroy-column', header, e)
+        }
+      }, self.html('i.fa.fa-remove', '')),
+      //self.html('button#rename-column.small', {
+      //  onclick: function (e) {
+      //    self.send('rename-column', header, e)
+      //  }
+      //}, self.html('i.fa.fa-pencil', '')),
+      header
+    ]))
   })
 
   var vtree = this.html('ul.headers-list.data-list-properties', items)
@@ -259,7 +292,16 @@ editor.views.item.addEventListener('destroy-row', function (row, e) {
   }
 })
 
-render()
+editor.views.headers.addEventListener('destroy-column', function (header, e) {
+  if (window.confirm('wait. are you sure you want to destroy all the data in this column?')) {
+    editor.destroyColumn(header)
+  }
+})
+
+editor.views.headers.addEventListener('rename-column', function (header, e) {
+  var newName = window.prompt('New name for the column')
+  editor.renameColumn(header, newName)
+})
 },{"./editor":2,"element-class":29,"lodash.debounce":43,"through2":78}],6:[function(require,module,exports){
 var BaseElement = require('base-element')
 var inherits = require('inherits')

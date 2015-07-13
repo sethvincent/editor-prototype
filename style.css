@@ -106,6 +106,7 @@ body {
   font-size: 15px;
   list-style-type: none;
   color: #fff;
+  overflow-x: hidden;
 }
 
 #item {
@@ -176,6 +177,13 @@ button {
   border-radius: 3px;
   cursor: pointer;
   margin-right: 5px;
+}
+
+button.small {
+  background-color: transparent;
+  margin-right: 5px;
+  border: none;
+  padding: 3px;
 }
 
 .data-actions {

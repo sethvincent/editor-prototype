@@ -71,4 +71,13 @@ editor.views.item.addEventListener('destroy-row', function (row, e) {
   }
 })
 
-render()
+editor.views.headers.addEventListener('destroy-column', function (header, e) {
+  if (window.confirm('wait. are you sure you want to destroy all the data in this column?')) {
+    editor.destroyColumn(header)
+  }
+})
+
+editor.views.headers.addEventListener('rename-column', function (header, e) {
+  var newName = window.prompt('New name for the column')
+  editor.renameColumn(header, newName)
+})

@@ -74,3 +74,23 @@ Editor.prototype.destroyRow = function (key) {
   })
   this.render({ data: this.data })
 }
+
+Editor.prototype.destroyColumn = function (name) {
+  this.data.forEach(function (item) {
+    delete item.value[name]
+  })
+  this.properties = this.properties.filter(function (header) {
+    return header !== name
+  })
+  this.render({ data: this.data, properties: this.properties })
+}
+
+Editor.prototype.renameColumn = function (oldname, newname) {
+  this.data.forEach(function (item) {
+    item.value[newname] = item.value[oldname]
+    delete item.value[oldname]
+  })
+  var i = this.properties.indexOf(oldname)
+  this.properties[i] = newname
+  this.render({ data: this.data, properties: this.properties })
+}
