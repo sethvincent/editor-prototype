@@ -20,6 +20,7 @@ Item.prototype.render = function (obj) {
       oninput: function (e) {
         obj.value[key] = e.target.value
         self.send('input', obj.value[key], obj, e)
+        self.render(obj)
       }
     }
 
@@ -43,5 +44,6 @@ Item.prototype.render = function (obj) {
       }}, 'x'),
     self.html('div.item-properties-wrapper', fields)
   ])
+
   return this.afterRender(vtree)
 }

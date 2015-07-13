@@ -58,7 +58,6 @@ Filter.prototype.render = function (list) {
     type: 'text',
     attributes: { placeholder: 'search' },
     oninput: debounce(function (e) {
-      console.log('after input', list)
       if (e.target.value.length === 0) return self.send('reset')
       if (e.target.value.length > 2) {
         var results = filterRows(e.target.value, list)
@@ -198,6 +197,7 @@ Item.prototype.render = function (obj) {
       oninput: function (e) {
         obj.value[key] = e.target.value
         self.send('input', obj.value[key], obj, e)
+        self.render(obj)
       }
     }
 
@@ -221,6 +221,7 @@ Item.prototype.render = function (obj) {
       }}, 'x'),
     self.html('div.item-properties-wrapper', fields)
   ])
+
   return this.afterRender(vtree)
 }
 

@@ -17,7 +17,6 @@ Filter.prototype.render = function (list) {
     type: 'text',
     attributes: { placeholder: 'search' },
     oninput: debounce(function (e) {
-      console.log('after input', list)
       if (e.target.value.length === 0) return self.send('reset')
       if (e.target.value.length > 2) {
         var results = filterRows(e.target.value, list)
