@@ -15,7 +15,7 @@ editor.views.item.addEventListener('close', function (e) {
   elClass(editor.el.listWrapper).add('active')
 })
 
-var render = window.render = debounce(editor.render.bind(editor), 100)
+var render = editor.render.bind(editor)
 
 editor.views.filter.addEventListener('filter', function (results, length) {
   render({ data: results })
