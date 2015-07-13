@@ -81,3 +81,5 @@ editor.views.headers.addEventListener('rename-column', function (header, e) {
   var newName = window.prompt('New name for the column')
   editor.renameColumn(header, newName)
 })
+
+editor.render()

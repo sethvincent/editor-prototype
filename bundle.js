@@ -302,6 +302,8 @@ editor.views.headers.addEventListener('rename-column', function (header, e) {
   var newName = window.prompt('New name for the column')
   editor.renameColumn(header, newName)
 })
+
+editor.render()
 },{"./editor":2,"element-class":29,"lodash.debounce":43,"through2":78}],6:[function(require,module,exports){
 var BaseElement = require('base-element')
 var inherits = require('inherits')
