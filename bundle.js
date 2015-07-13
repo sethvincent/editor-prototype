@@ -253,8 +253,10 @@ editor.views.actions.addEventListener('destroy', function (e) {
 })
 
 editor.views.item.addEventListener('destroy-row', function (row, e) {
-  editor.destroyRow(row.key)
-  itemInActive()
+  if (window.confirm('wait. are you sure you want to destroy all the data in this row?')) {
+    editor.destroyRow(row.key)
+    itemInActive()
+  }
 })
 
 render()
