@@ -2,17 +2,7 @@ var through = require('through2')
 var debounce = require('lodash.debounce')
 var elClass = require('element-class')
 
-var properties = Object.keys({
-  title: 'this is title ' + i,
-  description: 'this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool ',
-  someField: 'this is a field',
-  another: (123 * i).toString(),
-  pizza: (123 / i).toString(),
-  awesome: (1 * i).toString(),
-  serious: 'nope'
-})
-
-var editor = require('./editor')({ properties: properties })
+var editor = require('./editor')()
 
 editor.views.list.addEventListener('click', function (e, row) {
   editor.views.item.render(row)
@@ -43,19 +33,25 @@ editor.views.item.addEventListener('input', function (property, row, e) {
   render()
 })
 
-for (var i=0;i<=100;i++) {
-  editor.write({
-    key: i,
-    value: {
-      title: 'this is title ' + i,
-      description: 'this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool this has long text that cuts off its cool ',
-      someField: 'this is a field',
-      another: (123 * i).toString(),
-      pizza: (123 / i).toString(),
-      awesome: (1 * i).toString(),
-      serious: 'nope'
-    }
+editor.views.actions.addEventListener('new-row', function (e) {
+  var row = {
+    key: editor.data.length+1,
+    value: {}
+  }
+
+  editor.properties.forEach(function (key) {
+    row.value[key] = null
   })
-}
+
+  editor.write(row)
+})
+
+editor.views.actions.addEventListener('new-column', function (e) {
+  editor.newColumn()
+})
+
+editor.views.actions.addEventListener('destroy', function (e) {
+  editor.destroy()
+})
 
 render()

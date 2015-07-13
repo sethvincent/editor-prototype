@@ -41,7 +41,7 @@ function filterRows (txt, list) {
   var results = []
   list.forEach(function (row) {
     Object.keys(row.value).forEach(function (key) {
-      if (row.value[key].indexOf(txt) > -1) results.push(row)
+      if (row.value[key] && row.value[key].indexOf(txt) > -1) results.push(row)
     })
   })
   return results
