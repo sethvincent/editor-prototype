@@ -15,7 +15,13 @@ Item.prototype.render = function (obj) {
   var fields = []
 
   Object.keys(obj.value).forEach(function (key) {
-    var options = { value: obj.value[key] }
+    var options = { 
+      value: obj.value[key],
+      oninput: function (e) {
+        obj.value[key] = e.target.value
+        self.send('input', obj.value[key], obj, e)
+      }
+    }
 
     if (key === self.titleField) options.className += ' title'
     var field = self.html('textarea.item-property-value', options)

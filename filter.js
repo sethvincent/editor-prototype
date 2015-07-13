@@ -12,11 +12,12 @@ function Filter (options) {
 
 Filter.prototype.render = function (list) {
   var self = this
-  
+  console.log('before input', list)
   var input = self.html('input', { 
     type: 'text',
     attributes: { placeholder: 'search' },
     oninput: debounce(function (e) {
+      console.log('after input', list)
       if (e.target.value.length === 0) return self.send('reset')
       if (e.target.value.length > 2) {
         var results = filterRows(e.target.value, list)
@@ -29,7 +30,7 @@ Filter.prototype.render = function (list) {
     onclick: function (e) {
       input.properties.value = null
       self.send('reset')
-      self.render(list )
+      self.render(list)
     }
   }, 'reset')
 

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bundle": "browserify example.js -o bundle.js",
-    "start": "budo example.js:bundle.js --live"
+    "bundle": "browserify index.js -o bundle.js",
+    "start": "budo index.js:bundle.js"
   },
   "author": "",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "extend": "^2.0.1",
     "fuzzysearch": "^1.0.3",
     "inherits": "^2.0.1",
-    "lodash.debounce": "^3.1.0",
+    "lodash.debounce": "^3.1.1",
     "through2": "^0.6.5",
     "view-list": "^2.0.0"
   },
