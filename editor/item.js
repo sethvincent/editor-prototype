@@ -10,12 +10,13 @@ function Item (options) {
   this.titleField = options.titleField
 }
 
-Item.prototype.render = function (obj) {
+Item.prototype.render = function (obj, options) {
   var self = this
   var fields = []
 
   Object.keys(obj.value).forEach(function (key) {
-    var options = { 
+    var options = {
+      id: 'field-' + obj.key + '-' + key,
       value: obj.value[key],
       oninput: function (e) {
         obj.value[key] = e.target.value

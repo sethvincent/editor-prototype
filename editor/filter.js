@@ -12,7 +12,6 @@ function Filter (options) {
 
 Filter.prototype.render = function (list) {
   var self = this
-  console.log('before input', list)
   var input = self.html('input', { 
     type: 'text',
     attributes: { placeholder: 'search' },

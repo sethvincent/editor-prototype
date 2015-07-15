@@ -63,7 +63,8 @@ body {
   padding: 0px;
 }
 
-.list-properties:hover {
+.list-properties:hover,
+.list-row.active .list-properties {
   background-color: #fcfcfc;
   cursor: pointer;
 }
@@ -121,7 +122,11 @@ body {
 }
 
 .list-header-item button {
-  color: #999;
+  color: #acacac;
+  float: right;
+  margin-top: 5px;
+  margin-right: 0px;
+  font-size: 14px;
 }
 
 .list-header-item button:hover {
@@ -136,6 +141,7 @@ body {
   bottom: 10px;
   background-color: #fff;
   border: 1px solid #ccc;
+  border-radius: 3px;
   padding: 20px;
   overflow-y: auto;
   display: none;
@@ -194,11 +200,11 @@ button {
   border-radius: 3px;
   cursor: pointer;
   margin-right: 5px;
+  color: #fff;
 }
 
 button.small {
   background-color: transparent;
-  margin-right: 5px;
   border: none;
   padding: 3px;
 }

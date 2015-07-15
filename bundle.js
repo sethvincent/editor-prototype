@@ -60,7 +60,6 @@ function Filter (options) {
 
 Filter.prototype.render = function (list) {
   var self = this
-  console.log('before input', list)
   var input = self.html('input', { 
     type: 'text',
     attributes: { placeholder: 'search' },
@@ -127,12 +126,15 @@ Headers.prototype.render = function (headers) {
 },{"base-element":8,"inherits":86}],4:[function(require,module,exports){
 var through = require('through2')
 var storage = require('simple-local-storage')
+var elClass = require('element-class')
+var dataset = require('data-set')
 
 module.exports = Editor
 
 function Editor (options) {
   if (!(this instanceof Editor)) return new Editor(options)
   options = options || {}
+  var self = this
 
   this.data = []
   this.properties = options.properties || []
@@ -154,11 +156,28 @@ function Editor (options) {
   this.store = new storage()
   var state = this.store.get('state')
   if (state) {
-    console.log(typeof state)
     this.data = state.data
     this.properties = state.properties
     this.render(state)
   }
+
+  this.list.addEventListener('click', function (e, row) {
+    var rowEl = e.target.parentNode.parentNode
+    var header = dataset(e.target).key
+
+    self._active.cell = e.target
+    self._active.column = header
+    self._active.row = rowEl
+    self._active.rowKey = row.key
+    self._active.fieldId = 'field-'+row.key+'-'+header
+
+    self.data.forEach(function (obj) {
+      if (obj.key === row.key) row.active = { cell: e.target }
+      else obj.active = false
+    })
+    
+    self.list.send('active', self._active)
+  })
 }
 
 Editor.prototype.render = function (options) {
@@ -185,6 +204,7 @@ Editor.prototype.newColumn = function () {
     item.value[name] = null
   })
   this.list.render(this.data)
+  if (this._active.rowdata) this.item.render(this._active.rowdata)
 }
 
 Editor.prototype.destroy = function () {
@@ -221,7 +241,17 @@ Editor.prototype.renameColumn = function (oldname, newname) {
   this.render({ data: this.data, properties: this.properties })
 }
 
-},{"./actions":1,"./filter":2,"./headers":3,"./item":5,"./list":6,"simple-local-storage":89,"through2":100}],5:[function(require,module,exports){
+Editor.prototype.setActiveRow = function (key) {
+  this
+}
+
+Editor.prototype.setActiveColumn = function (key) {
+  this.data.forEach(function (row) {
+    if (row.key === key) row.active = true
+    else row.active = false
+  })
+}
+},{"./actions":1,"./filter":2,"./headers":3,"./item":5,"./list":6,"data-set":81,"element-class":84,"simple-local-storage":89,"through2":100}],5:[function(require,module,exports){
 var BaseElement = require('base-element')
 var inherits = require('inherits')
 
@@ -234,12 +264,13 @@ function Item (options) {
   this.titleField = options.titleField
 }
 
-Item.prototype.render = function (obj) {
+Item.prototype.render = function (obj, options) {
   var self = this
   var fields = []
 
   Object.keys(obj.value).forEach(function (key) {
-    var options = { 
+    var options = {
+      id: 'field-' + obj.key + '-' + key,
       value: obj.value[key],
       oninput: function (e) {
         obj.value[key] = e.target.value
@@ -306,10 +337,6 @@ module.exports = function (opts) {
         return property
       }
 
-      function onclick (e) {
-        list.send('click', e, row)
-      }
-
       function onfocus (e) {
         var property = getProperty(e.target)
         list.send('focus', e, property, row)
@@ -321,20 +348,32 @@ module.exports = function (opts) {
       }
 
       var propertyOptions = {
+        id: 'cell-' + row.key + '-' + key,
         attributes: { 
           'data-type': 'string', // todo: use property type from options.properties
-          'data-key': key
+          'data-key': key,
         },
         onfocus: onfocus,
-        onblur: onblur
+        onblur: onblur,
       }
 
-      return list.html('li.list-property', { onclick: onclick }, [
+      return list.html('li.list-property', [
         list.html('span.list-property-value', propertyOptions, row.value[key]),
       ])
     }
 
-    var rowOptions = { attributes: { 'data-key': row.key } }
+    var rowOptions = {
+      attributes: { 'data-key': row.key },
+      onclick: function (e) {
+        list.send('click', e, row)
+      }
+    }
+
+    if (row.active) {
+      rowOptions.className = 'active'
+      rowOptions.attributes['data-active'] = 'true'
+      console.log(row)
+    }
 
     return list.html('li.list-row', rowOptions, [
       list.html('ul.list-properties', elements)
@@ -348,7 +387,6 @@ module.exports = function (opts) {
 var through = require('through2')
 var debounce = require('lodash.debounce')
 var elClass = require('element-class')
-
 var editor = require('./editor')()
 
 function itemActive () {
@@ -364,28 +402,28 @@ function listActive () {
 
 function checkListWidth () {
   var columnsWidth = editor.properties.length * 150
-  var listActiveWidth = window.innerWidth
+  var listActiveWidth = window.innerWidth - 20
   var itemActiveWidth = Math.floor(window.innerWidth * .55)
-
-  console.log(columnsWidth, listActiveWidth, itemActiveWidth)
 
   if (elClass(editor.el.listWrapper).has('active')) {
     if (columnsWidth >= listActiveWidth) {
-      console.log('huh')
       editor.el.listWrapper.style.width = 'inherit'
+      editor.el.listWrapper.style.right = '10px'
     }
     else if (columnsWidth >= itemActiveWidth) {
-      console.log('wat')
       editor.el.listWrapper.style.width = (editor.properties.length * 150 + 2).toString() + 'px'
+    }
+    else {
+      editor.el.listWrapper.style.width = 'inherit'
+      editor.el.listWrapper.style.right = 'inherit'
     }
   }
 }
 
-listActive()
-
 editor.list.addEventListener('click', function (e, row) {
   editor.item.render(row)
   itemActive()
+  editor.render()
 })
 
 editor.item.addEventListener('close', function (e) {
@@ -423,6 +461,7 @@ editor.actions.addEventListener('new-row', function (e) {
 
 editor.actions.addEventListener('new-column', function (e) {
   editor.newColumn()
+  editor.render()
   checkListWidth()
 })
 
@@ -435,7 +474,7 @@ editor.actions.addEventListener('destroy', function (e) {
 editor.item.addEventListener('destroy-row', function (row, e) {
   if (window.confirm('wait. are you sure you want to destroy all the data in this row?')) {
     editor.destroyRow(row.key)
-    itemInActive()
+    listActive()
   }
 })
 
@@ -451,7 +490,14 @@ editor.headers.addEventListener('rename-column', function (header, e) {
   editor.renameColumn(header, newName)
 })
 
+editor.list.addEventListener('active', function (active) {
+  setTimeout(function () {
+    document.getElementById(active.fieldId).focus()
+  }, 0)
+})
+
 editor.render()
+listActive()
 },{"./editor":4,"element-class":84,"lodash.debounce":87,"through2":100}],8:[function(require,module,exports){
 module.exports = BaseElement
 

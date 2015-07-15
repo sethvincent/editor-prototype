@@ -1,11 +1,14 @@
 var through = require('through2')
 var storage = require('simple-local-storage')
+var elClass = require('element-class')
+var dataset = require('data-set')
 
 module.exports = Editor
 
 function Editor (options) {
   if (!(this instanceof Editor)) return new Editor(options)
   options = options || {}
+  var self = this
 
   this.data = []
   this.properties = options.properties || []
@@ -27,11 +30,28 @@ function Editor (options) {
   this.store = new storage()
   var state = this.store.get('state')
   if (state) {
-    console.log(typeof state)
     this.data = state.data
     this.properties = state.properties
     this.render(state)
   }
+
+  this.list.addEventListener('click', function (e, row) {
+    var rowEl = e.target.parentNode.parentNode
+    var header = dataset(e.target).key
+
+    self._active.cell = e.target
+    self._active.column = header
+    self._active.row = rowEl
+    self._active.rowKey = row.key
+    self._active.fieldId = 'field-'+row.key+'-'+header
+
+    self.data.forEach(function (obj) {
+      if (obj.key === row.key) row.active = { cell: e.target }
+      else obj.active = false
+    })
+    
+    self.list.send('active', self._active)
+  })
 }
 
 Editor.prototype.render = function (options) {
@@ -58,6 +78,7 @@ Editor.prototype.newColumn = function () {
     item.value[name] = null
   })
   this.list.render(this.data)
+  if (this._active.rowdata) this.item.render(this._active.rowdata)
 }
 
 Editor.prototype.destroy = function () {
@@ -92,4 +113,15 @@ Editor.prototype.renameColumn = function (oldname, newname) {
   var i = this.properties.indexOf(oldname)
   this.properties[i] = newname
   this.render({ data: this.data, properties: this.properties })
+}
+
+Editor.prototype.setActiveRow = function (key) {
+  this
+}
+
+Editor.prototype.setActiveColumn = function (key) {
+  this.data.forEach(function (row) {
+    if (row.key === key) row.active = true
+    else row.active = false
+  })
 }

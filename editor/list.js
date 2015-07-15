@@ -25,10 +25,6 @@ module.exports = function (opts) {
         return property
       }
 
-      function onclick (e) {
-        list.send('click', e, row)
-      }
-
       function onfocus (e) {
         var property = getProperty(e.target)
         list.send('focus', e, property, row)
@@ -40,20 +36,32 @@ module.exports = function (opts) {
       }
 
       var propertyOptions = {
+        id: 'cell-' + row.key + '-' + key,
         attributes: { 
           'data-type': 'string', // todo: use property type from options.properties
-          'data-key': key
+          'data-key': key,
         },
         onfocus: onfocus,
-        onblur: onblur
+        onblur: onblur,
       }
 
-      return list.html('li.list-property', { onclick: onclick }, [
+      return list.html('li.list-property', [
         list.html('span.list-property-value', propertyOptions, row.value[key]),
       ])
     }
 
-    var rowOptions = { attributes: { 'data-key': row.key } }
+    var rowOptions = {
+      attributes: { 'data-key': row.key },
+      onclick: function (e) {
+        list.send('click', e, row)
+      }
+    }
+
+    if (row.active) {
+      rowOptions.className = 'active'
+      rowOptions.attributes['data-active'] = 'true'
+      console.log(row)
+    }
 
     return list.html('li.list-row', rowOptions, [
       list.html('ul.list-properties', elements)

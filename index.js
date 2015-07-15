@@ -1,7 +1,6 @@
 var through = require('through2')
 var debounce = require('lodash.debounce')
 var elClass = require('element-class')
-
 var editor = require('./editor')()
 
 function itemActive () {
@@ -17,28 +16,28 @@ function listActive () {
 
 function checkListWidth () {
   var columnsWidth = editor.properties.length * 150
-  var listActiveWidth = window.innerWidth
+  var listActiveWidth = window.innerWidth - 20
   var itemActiveWidth = Math.floor(window.innerWidth * .55)
-
-  console.log(columnsWidth, listActiveWidth, itemActiveWidth)
 
   if (elClass(editor.el.listWrapper).has('active')) {
     if (columnsWidth >= listActiveWidth) {
-      console.log('huh')
       editor.el.listWrapper.style.width = 'inherit'
+      editor.el.listWrapper.style.right = '10px'
     }
     else if (columnsWidth >= itemActiveWidth) {
-      console.log('wat')
       editor.el.listWrapper.style.width = (editor.properties.length * 150 + 2).toString() + 'px'
+    }
+    else {
+      editor.el.listWrapper.style.width = 'inherit'
+      editor.el.listWrapper.style.right = 'inherit'
     }
   }
 }
 
-listActive()
-
 editor.list.addEventListener('click', function (e, row) {
   editor.item.render(row)
   itemActive()
+  editor.render()
 })
 
 editor.item.addEventListener('close', function (e) {
@@ -76,6 +75,7 @@ editor.actions.addEventListener('new-row', function (e) {
 
 editor.actions.addEventListener('new-column', function (e) {
   editor.newColumn()
+  editor.render()
   checkListWidth()
 })
 
@@ -88,7 +88,7 @@ editor.actions.addEventListener('destroy', function (e) {
 editor.item.addEventListener('destroy-row', function (row, e) {
   if (window.confirm('wait. are you sure you want to destroy all the data in this row?')) {
     editor.destroyRow(row.key)
-    itemInActive()
+    listActive()
   }
 })
 
@@ -104,4 +104,11 @@ editor.headers.addEventListener('rename-column', function (header, e) {
   editor.renameColumn(header, newName)
 })
 
+editor.list.addEventListener('active', function (active) {
+  setTimeout(function () {
+    document.getElementById(active.fieldId).focus()
+  }, 0)
+})
+
 editor.render()
+listActive()
