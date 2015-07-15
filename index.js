@@ -14,34 +14,34 @@ function itemInActive () {
   elClass(editor.el.listWrapper).add('active')
 }
 
-editor.views.list.addEventListener('click', function (e, row) {
-  editor.views.item.render(row)
+editor.list.addEventListener('click', function (e, row) {
+  editor.item.render(row)
   itemActive()
 })
 
-editor.views.item.addEventListener('close', function (e) {
+editor.item.addEventListener('close', function (e) {
   itemInActive()
 })
 
 var render = editor.render.bind(editor)
 
-editor.views.filter.addEventListener('filter', function (results, length) {
+editor.filter.addEventListener('filter', function (results, length) {
   render({ data: results })
 })
 
-editor.views.filter.addEventListener('reset', function (results, length) {
+editor.filter.addEventListener('reset', function (results, length) {
   render()
 })
 
-editor.views.list.addEventListener('load', function () {
-  editor.views.filter.render(editor.data)
+editor.list.addEventListener('load', function () {
+  editor.filter.render(editor.data)
 })
 
-editor.views.item.addEventListener('input', function (property, row, e) {
+editor.item.addEventListener('input', function (property, row, e) {
   render()
 })
 
-editor.views.actions.addEventListener('new-row', function (e) {
+editor.actions.addEventListener('new-row', function (e) {
   var row = {
     key: editor.data.length+1,
     value: {}
@@ -54,30 +54,30 @@ editor.views.actions.addEventListener('new-row', function (e) {
   editor.write(row)
 })
 
-editor.views.actions.addEventListener('new-column', function (e) {
+editor.actions.addEventListener('new-column', function (e) {
   editor.newColumn()
 })
 
-editor.views.actions.addEventListener('destroy', function (e) {
+editor.actions.addEventListener('destroy', function (e) {
   if (window.confirm('wait. are you sure you want to destroy all this data?')) {
     editor.destroy()
   }
 })
 
-editor.views.item.addEventListener('destroy-row', function (row, e) {
+editor.item.addEventListener('destroy-row', function (row, e) {
   if (window.confirm('wait. are you sure you want to destroy all the data in this row?')) {
     editor.destroyRow(row.key)
     itemInActive()
   }
 })
 
-editor.views.headers.addEventListener('destroy-column', function (header, e) {
+editor.headers.addEventListener('destroy-column', function (header, e) {
   if (window.confirm('wait. are you sure you want to destroy all the data in this column?')) {
     editor.destroyColumn(header)
   }
 })
 
-editor.views.headers.addEventListener('rename-column', function (header, e) {
+editor.headers.addEventListener('rename-column', function (header, e) {
   var newName = window.prompt('New name for the column')
   editor.renameColumn(header, newName)
 })

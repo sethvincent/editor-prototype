@@ -23,14 +23,14 @@ body {
 .list-wrapper {
   overflow-x: scroll;
   overflow-y: hidden;
-  width: 55%;
-  background-color: #ccc;
+  max-width: 55%;
+  background-color: #fff;
   position: fixed;
   top: 60px;
   left: 10px;
   bottom: 10px;
   border: 1px solid #ccc;
-  border-left: 0;
+  border-radius: 3px;
 }
 
 .list-wrapper.active {
@@ -60,12 +60,10 @@ body {
 .list-properties {
   margin: 0px;
   padding: 0px;
-  border-left: 4px solid #ccc;
 }
 
 .list-properties:hover {
   background-color: #fcfcfc;
-  border-left: 4px solid #999;
   cursor: pointer;
 }
 
@@ -87,26 +85,46 @@ body {
   font-size: 13px;
   line-height: 40px;
   display: inline-block;
-  border-right: 1px solid #efefef;
-  border-bottom: 1px solid #efefef;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.list-property:last-child .list-property-value {
+  border-right: 0px;
 }
 
 .headers-list {
   white-space: nowrap;
   margin: 0px;
-  padding: 3px 0px 5px 8px;
-  position: relative;
+  padding: 0px;
+  height: 40px;
 }
 
 .list-header-item {
   width: 150px;
-  padding: 0px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0px 8px;
   display: inline-block;
-  font-weight: 500;
   font-size: 15px;
   list-style-type: none;
-  color: #fff;
   overflow-x: hidden;
+  font-weight: 900;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #888;
+  background-color: #fefefc;
+}
+
+.list-header-item:last-child {
+  border-right: none;
+}
+
+.list-header-item button {
+  color: #999;
+}
+
+.list-header-item button:hover {
+  color: #222;
 }
 
 #item {
@@ -135,10 +153,9 @@ body {
 }
 
 .item-property-label {
-  text-transform: uppercase;
-  color: #999;
-  font-size: 12px;
   display: block;
+  font-weight: 900;
+  margin-bottom: 5px;
 }
 
 .item-property-value {
@@ -173,7 +190,6 @@ button {
   height: 30px;
   padding: 0px 10px;
   background-color: #333;
-  color: #fff;
   border-radius: 3px;
   cursor: pointer;
   margin-right: 5px;
@@ -186,7 +202,32 @@ button.small {
   padding: 3px;
 }
 
-.data-actions {
+.menubar {
   float: left;
-  margin: 5px 10px 0px 5px;
+  margin: 0;
+}
+
+.menubar ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+.menubar .menu-item {
+  display: inline-block;
+  list-style-type: none;
+}
+
+.menu-item button {
+  border: none;
+  height: 40px;
+  padding: 0px 15px;
+  background-color: transparent;
+  color: #fafafa;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.menu-item button:hover {
+  background-color: #222;
+  color: #fff;
 }
