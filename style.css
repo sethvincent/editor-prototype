@@ -34,7 +34,7 @@ body {
 }
 
 .list-wrapper.active {
-  width: inherit;
+  max-width: 100%;
 }
 
 #list {
