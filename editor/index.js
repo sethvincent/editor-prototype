@@ -9,6 +9,7 @@ function Editor (options) {
 
   this.data = []
   this.properties = options.properties || []
+  this._active = { row: null, column: null, cell: null }
 
   this.el = {
     list: document.getElementById('list'),

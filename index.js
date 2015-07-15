@@ -9,10 +9,32 @@ function itemActive () {
   elClass(editor.el.listWrapper).remove('active')
 }
 
-function itemInActive () {
+function listActive () {
   elClass(editor.el.item).remove('active')
   elClass(editor.el.listWrapper).add('active')
+  checkListWidth()
 }
+
+function checkListWidth () {
+  var columnsWidth = editor.properties.length * 150
+  var listActiveWidth = window.innerWidth
+  var itemActiveWidth = Math.floor(window.innerWidth * .55)
+
+  console.log(columnsWidth, listActiveWidth, itemActiveWidth)
+
+  if (elClass(editor.el.listWrapper).has('active')) {
+    if (columnsWidth >= listActiveWidth) {
+      console.log('huh')
+      editor.el.listWrapper.style.width = 'inherit'
+    }
+    else if (columnsWidth >= itemActiveWidth) {
+      console.log('wat')
+      editor.el.listWrapper.style.width = (editor.properties.length * 150 + 2).toString() + 'px'
+    }
+  }
+}
+
+listActive()
 
 editor.list.addEventListener('click', function (e, row) {
   editor.item.render(row)
@@ -20,17 +42,15 @@ editor.list.addEventListener('click', function (e, row) {
 })
 
 editor.item.addEventListener('close', function (e) {
-  itemInActive()
+  listActive()
 })
 
-var render = editor.render.bind(editor)
-
 editor.filter.addEventListener('filter', function (results, length) {
-  render({ data: results })
+  editor.render({ data: results })
 })
 
 editor.filter.addEventListener('reset', function (results, length) {
-  render()
+  editor.render()
 })
 
 editor.list.addEventListener('load', function () {
@@ -38,7 +58,7 @@ editor.list.addEventListener('load', function () {
 })
 
 editor.item.addEventListener('input', function (property, row, e) {
-  render()
+  editor.render()
 })
 
 editor.actions.addEventListener('new-row', function (e) {
@@ -56,6 +76,7 @@ editor.actions.addEventListener('new-row', function (e) {
 
 editor.actions.addEventListener('new-column', function (e) {
   editor.newColumn()
+  checkListWidth()
 })
 
 editor.actions.addEventListener('destroy', function (e) {
@@ -74,6 +95,7 @@ editor.item.addEventListener('destroy-row', function (row, e) {
 editor.headers.addEventListener('destroy-column', function (header, e) {
   if (window.confirm('wait. are you sure you want to destroy all the data in this column?')) {
     editor.destroyColumn(header)
+    checkListWidth()
   }
 })
 
